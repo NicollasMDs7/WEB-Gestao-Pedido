@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cadastrar Produto</title>
+  <style>
+    /* Estilização Geral */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to right, #e0eafc, #cfdef3);
+      color: #333;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      font-size: 2.5em;
+      color: #555;
+    }
+
+    .container {
+      background-color: #fff;
+      padding: 20px 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      max-width: 500px;
+      width: 100%;
+      transition: box-shadow 0.3s ease;
+    }
+
+    .container:hover {
+      box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    input,
+    button {
+      margin-bottom: 10px;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 1em;
+      width: 100%;
+    }
+
+    button {
+      background-color: #007bff;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .response-container {
+      margin-top: 10px;
+      color: green;
+      font-size: 1em;
+    }
+
+    .error-container {
+      color: red;
+      font-size: 1em;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>Cadastrar Produto</h1>
+    <form id="productForm">
+      <h3>Informações do Produto</h3>
+      <input type="text" id="nome" placeholder="Nome do Produto" required>
+      <input type="number" id="preco" placeholder="Preço do Produto" step="0.01" required>
+      
+      <h3>Informações do Pedido</h3>
+      <input type="number" id="pedidoId" placeholder="ID do Pedido" required>
+      <input type="text" id="pedidoDescricao" placeholder="Descrição do Pedido" required>
+      
+      <h3>Informações do Usuário</h3>
+      <input type="text" id="usuarioLogin" placeholder="Login do Usuário" required>
+      <input type="email" id="usuarioEmail" placeholder="Email do Usuário" required>
+      <input type="password" id="usuarioSenha" placeholder="Senha do Usuário" required>
+      
+      <button type="submit">Cadastrar Produto</button>
+    </form>
+
+    <div class="response-container" id="responseMessage"></div>
+    <div class="error-container" id="errorResponse"></div>
+    
+    <button onclick="window.location.href='opcoes.html'">Voltar para o Painel</button>
+  </div>
+
+  <script>
+    document.getElementById("productForm").addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      const nome = document.getElementById("nome").value;
+      const preco = parseFloat(document.getElementById("preco").value);
+
+      const pedidoId = parseInt(document.getElementById("pedidoId").value);
+      const pedidoDescricao = document.getElementById("pedidoDescricao").value;
+
+      const usuarioLogin = document.getElementById("usuarioLogin").value;
+      const usuarioEmail = document.getElementById("usuarioEmail").value;
+      const usuarioSenha = document.getElementById("usuarioSenha").value;
+
+      const produtoData = {
+        nome,
+        preco,
+        pedido: {
+          id: pedidoId,
+          descricao: pedidoDescricao,
+          usuario: {
+            login: usuarioLogin,
+            email: usuarioEmail,
+            password: usuarioSenha,
+          },
+        },
+      };
+
+      try {
+        const response = await fetch("http://localhost:8080/produtos", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Basic " + btoa("admin:teste123") // Credenciais de autenticação
+          },
+          body: JSON.stringify(produtoData),
+        });
+
+        if (response.ok) {
+          const responseBody = await response.json();
+          document.getElementById("responseMessage").innerHTML = `<span>Produto cadastrado com sucesso! ID: ${responseBody.id}</span>`;
+          document.getElementById("productForm").reset();
+        } else {
+          const errorText = await response.text();
+          throw new Error(errorText);
+        }
+      } catch (error) {
+        document.getElementById("errorResponse").innerHTML = `<span>${error.message}</span>`;
+      }
+    });
+  </script>
+</body>
+
+</html>

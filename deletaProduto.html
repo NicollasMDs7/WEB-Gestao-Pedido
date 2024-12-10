@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Deletar Produto</title>
+  <style>
+    /* Estilização Geral */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to right, #e0eafc, #cfdef3);
+      color: #333;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      font-size: 2.5em;
+      color: #555;
+    }
+
+    .container {
+      background-color: #fff;
+      padding: 20px 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      max-width: 400px;
+      width: 100%;
+      transition: box-shadow 0.3s ease;
+    }
+
+    .container:hover {
+      box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    input,
+    button {
+      margin-bottom: 15px;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 1em;
+      width: 100%;
+    }
+
+    button {
+      background-color: #dc3545;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #c82333;
+    }
+
+    .response-container {
+      margin-top: 10px;
+      color: green;
+      font-size: 1em;
+    }
+
+    .error-container {
+      color: red;
+      font-size: 1em;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>Deletar Produto</h1>
+    <form id="deleteForm">
+      <input type="number" id="produtoId" placeholder="Digite o ID do Produto para deletar" required>
+      <button type="submit">Deletar Produto</button>
+    </form>
+
+    <div class="response-container" id="responseMessage"></div>
+    <div class="error-container" id="errorResponse"></div>
+
+    <button onclick="window.location.href='opcoes.html'">Voltar para o Painel</button>
+  </div>
+
+  <script>
+    document.getElementById("deleteForm").addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      const produtoId = document.getElementById("produtoId").value;
+      const responseMessage = document.getElementById("responseMessage");
+      const errorResponse = document.getElementById("errorResponse");
+
+      // Limpar mensagens anteriores
+      responseMessage.innerHTML = "";
+      errorResponse.innerHTML = "";
+
+      if (!produtoId) {
+        errorResponse.innerHTML = `<span>Por favor, insira um ID válido para deletar.</span>`;
+        return;
+      }
+
+      try {
+        const response = await fetch(`http://localhost:8080/produtos/${produtoId}`, {
+          method: "DELETE",
+          headers: {
+            "Authorization": "Basic " + btoa("admin:teste123"), // Credenciais de autenticação
+          },
+        });
+
+        if (response.status === 204) {
+          responseMessage.innerHTML = `<span>Produto deletado com sucesso!</span>`;
+        } else {
+          throw new Error("Erro ao deletar o produto.");
+        }
+      } catch (error) {
+        errorResponse.innerHTML = `<span>${error.message}</span>`;
+      }
+    });
+  </script>
+</body>
+
+</html>

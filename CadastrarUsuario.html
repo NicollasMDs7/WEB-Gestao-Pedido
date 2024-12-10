@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cadastro de Usuário</title>
+  <style>
+    /* Estilização Geral */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to right, #e0eafc, #cfdef3);
+      color: #333;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      text-align: center;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      font-size: 2.5em;
+      color: #555;
+    }
+
+    form {
+      background-color: #fff;
+      padding: 20px 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 400px;
+      transition: box-shadow 0.3s ease;
+    }
+
+    form:hover {
+      box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    input {
+      margin-bottom: 15px;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 1em;
+      width: 100%;
+    }
+
+    button {
+      background-color: #007BFF;
+      border: none;
+      color: white;
+      padding: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1em;
+      transition: background-color 0.3s ease;
+      width: 100%;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .response-container {
+      margin-top: 20px;
+      background-color: #f8f9fa;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 0.9em;
+      text-align: center;
+      max-height: 50px;
+      overflow: hidden;
+    }
+
+    .success {
+      color: green;
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+  <div>
+    <h1>Cadastro de Usuário</h1>
+    <form id="userForm">
+      <input type="text" id="login" placeholder="Login" required>
+      <input type="email" id="email" placeholder="Email" required>
+      <input type="password" id="password" placeholder="Senha" required>
+      <button type="submit">Cadastrar</button>
+    </form>
+
+    <div class="response-container" id="response">
+      <!-- Mensagem de sucesso exibida aqui -->
+    </div>
+  </div>
+
+  <script>
+    document.getElementById("userForm").addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      const login = document.getElementById("login").value;
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      const userData = {
+        login,
+        email,
+        password
+      };
+
+      try {
+        const response = await fetch("http://localhost:8080/users", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Basic " + btoa("admin:teste123") // Credenciais para autenticação
+          },
+          body: JSON.stringify(userData)
+        });
+
+        if (response.ok) {
+          // Se a resposta foi bem-sucedida, exibe mensagem de sucesso
+          document.getElementById("response").innerHTML = `<span class="success">Usuário cadastrado com sucesso! Redirecionando...</span>`;
+          // Aguarda 1 segundo para o usuário ver a mensagem e redireciona para a tela principal
+          setTimeout(() => {
+            window.location.href = "opcoes.html"; // Redirecionamento para a tela principal
+          }, 1000);
+        } else {
+          throw new Error("Erro ao criar usuário.");
+        }
+      } catch (error) {
+        document.getElementById("response").innerHTML = `<span style="color: red;">Erro: ${error.message}</span>`;
+      }
+    });
+  </script>
+</body>
+
+</html>

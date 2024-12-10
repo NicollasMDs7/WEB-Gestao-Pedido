@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel de Ações</title>
+  <style>
+    /* Estilização Geral */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to right, #e0eafc, #cfdef3);
+      color: #333;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      text-align: center;
+      position: relative;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      font-size: 2.5em;
+      color: #555;
+    }
+
+    div.container {
+      background-color: #fff;
+      padding: 30px 40px;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 600px;
+      text-align: center;
+    }
+
+    button {
+      background-color: #007BFF;
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1em;
+      margin: 8px 0;
+      width: 100%;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    /* Botão sair ajustado no tamanho correto */
+    #btnSair {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background-color: #dc3545;
+      color: white;
+      padding: 8px 15px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1em;
+      text-align: center;
+      width: auto;
+    }
+
+    #btnSair:hover {
+      background-color: #c82333;
+    }
+
+    /* Modal para Avaliação */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.6);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      width: 400px;
+      text-align: center;
+    }
+
+    .stars-container span {
+      font-size: 2em;
+      cursor: pointer;
+      color: #ddd;
+      transition: color 0.2s ease;
+    }
+
+    .stars-container span.selected,
+    .stars-container span:hover,
+    .stars-container span:hover ~ span {
+      color: #ffc107;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Botão Sair ajustado no tamanho correto -->
+  <button id="btnSair" onclick="abrirModal()">Sair</button>
+
+  <!-- Conteúdo do Painel Principal -->
+  <div class="container">
+    <h1>Painel de Ações</h1>
+    <h3>Gerenciamento de Produtos</h3>
+    <button onclick="window.location.href='criarProduto.html'">Criar Produto</button>
+    <button onclick="window.location.href='listadeprodutos.html'">Listar Produto</button>
+    <button onclick="window.location.href='modificaProduto.html'">Editar Produto</button>
+    <button onclick="window.location.href='procuraproduto.html'">Pesquisar Produto</button>
+    <button onclick="window.location.href='deletaProduto.html'">Apagar Produto</button>
+
+    <h3>Gerenciamento de Pedidos</h3>
+    <button onclick="window.location.href='CadastrarPedido.html'">Criar Pedido</button>
+    <button onclick="window.location.href='ProcurarPedido.html'">Listar Pedido</button>
+    <button onclick="window.location.href='modificapedido.html'">Editar Pedido</button>
+    <button onclick="window.location.href='procurarpedidoid.html'">Pesquisar Pedido</button>
+    <button onclick="window.location.href='deletaPedido.html'">Apagar Pedido</button>
+  </div>
+
+  <!-- Modal para Avaliação -->
+  <div class="modal" id="modalAvaliar">
+    <div class="modal-content">
+      <h2>Avalie o Sistema</h2>
+      <div class="stars-container" id="avaliacaoContainer">
+        <span onclick="selecionarEstrela(1)">&#9733;</span>
+        <span onclick="selecionarEstrela(2)">&#9733;</span>
+        <span onclick="selecionarEstrela(3)">&#9733;</span>
+        <span onclick="selecionarEstrela(4)">&#9733;</span>
+        <span onclick="selecionarEstrela(5)">&#9733;</span>
+      </div>
+      <div class="modal-buttons">
+        <button onclick="enviarAvaliacao()">Enviar</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let estrelasSelecionadas = 0;
+
+    function abrirModal() {
+      document.getElementById("modalAvaliar").style.display = "flex";
+    }
+
+    function fecharModal() {
+      document.getElementById("modalAvaliar").style.display = "none";
+    }
+
+    function selecionarEstrela(estrelas) {
+      estrelasSelecionadas = estrelas;
+      const spans = document.querySelectorAll(".stars-container span");
+      spans.forEach((star, index) => {
+        star.classList.toggle("selected", index < estrelas);
+      });
+    }
+
+    function enviarAvaliacao() {
+      if (estrelasSelecionadas !== 5) {
+        alert("Por favor, selecione exatamente 5 estrelas para enviar sua avaliação.");
+      } else {
+        alert(`Obrigado! Você deu ${estrelasSelecionadas} estrelas.`);
+        fecharModal();
+        window.location.href = "cadastrarusuario.html";
+      }
+    }
+  </script>
+</body>
+
+</html>

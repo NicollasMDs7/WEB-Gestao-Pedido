@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Atualizar Pedido</title>
+  <style>
+    /* Estilização Geral */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to right, #e0eafc, #cfdef3);
+      color: #333;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      text-align: center;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      font-size: 2.5em;
+      color: #555;
+    }
+
+    div.container {
+      background-color: #fff;
+      padding: 20px 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 500px;
+      transition: box-shadow 0.3s ease;
+    }
+
+    div.container:hover {
+      box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    input {
+      margin-bottom: 15px;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 1em;
+      width: 100%;
+    }
+
+    button {
+      background-color: #007BFF;
+      border: none;
+      color: white;
+      padding: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1em;
+      transition: background-color 0.3s ease;
+      margin-bottom: 15px;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .response {
+      margin-top: 15px;
+      color: green;
+    }
+
+    .error {
+      margin-top: 15px;
+      color: red;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>Atualizar Pedido</h1>
+    <input type="number" id="pedidoId" placeholder="Digite o ID do Pedido" required>
+    <input type="text" id="descricao" placeholder="Digite a nova descrição" required>
+    <button id="atualizarPedido">Atualizar Pedido</button>
+    <div class="response" id="responseMessage"></div>
+    <div class="error" id="errorResponse"></div>
+
+    <!-- Botão para retornar ao painel -->
+    <button onclick="window.location.href = 'opcoes.html';">Voltar para o Painel</button>
+  </div>
+
+  <script>
+    document.getElementById("atualizarPedido").addEventListener("click", async () => {
+      const pedidoId = document.getElementById("pedidoId").value;
+      const descricao = document.getElementById("descricao").value;
+      const responseMessage = document.getElementById("responseMessage");
+      const errorResponse = document.getElementById("errorResponse");
+
+      // Limpar mensagens anteriores
+      responseMessage.innerHTML = "";
+      errorResponse.innerHTML = "";
+
+      if (!pedidoId || !descricao) {
+        errorResponse.innerHTML = `<span>Por favor, insira todos os campos obrigatórios.</span>`;
+        return;
+      }
+
+      try {
+        const response = await fetch(`http://localhost:8080/pedidos/${pedidoId}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Basic " + btoa("admin:teste123"), // Autenticação
+          },
+          body: JSON.stringify({ descricao }),
+        });
+
+        if (!response.ok) {
+          throw new Error("Erro ao atualizar o pedido.");
+        }
+
+        const result = await response.json();
+        responseMessage.innerHTML = `<span>Pedido atualizado com sucesso! Descrição: ${result.descricao}</span>`;
+      } catch (error) {
+        errorResponse.innerHTML = `<span>${error.message}</span>`;
+      }
+    });
+  </script>
+</body>
+
+</html>

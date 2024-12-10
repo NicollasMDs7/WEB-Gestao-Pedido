@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cadastro de Pedido</title>
+  <style>
+    /* Estilização Geral */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to right, #e0eafc, #cfdef3);
+      color: #333;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      text-align: center;
+      flex-direction: column;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      font-size: 2.5em;
+      color: #555;
+    }
+
+    form {
+      background-color: #fff;
+      padding: 20px 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 400px;
+      transition: box-shadow 0.3s ease;
+    }
+
+    form:hover {
+      box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    input {
+      margin-bottom: 15px;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 1em;
+      width: 100%;
+    }
+
+    button {
+      background-color: #007BFF;
+      border: none;
+      color: white;
+      padding: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1em;
+      transition: background-color 0.3s ease;
+      width: 100%;
+      margin-bottom: 10px;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .response-container {
+      margin-top: 20px;
+      background-color: #f8f9fa;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 0.9em;
+      text-align: center;
+      max-height: 50px;
+      overflow: hidden;
+    }
+
+    .success {
+      color: green;
+      font-weight: bold;
+    }
+
+  </style>
+</head>
+
+<body>
+  <div>
+    <h1>Cadastro de Pedido</h1>
+    <form id="pedidoForm">
+      <input type="text" id="descricao" placeholder="Descrição do Pedido" required>
+      <input type="number" id="usuarioId" placeholder="ID do Usuário" required>
+      <input type="text" id="loginUsuario" placeholder="Login do Usuário" required>
+      <input type="email" id="emailUsuario" placeholder="Email do Usuário" required>
+      <input type="password" id="senhaUsuario" placeholder="Senha do Usuário" required>
+      <button type="submit">Cadastrar Pedido</button>
+    </form>
+
+    <div class="response-container" id="response">
+      <!-- Mensagem de sucesso exibida aqui -->
+    </div>
+
+    <!-- Botão para retornar ao painel -->
+    <button onclick="window.location.href = 'opcoes.html';">Voltar para o Painel</button>
+  </div>
+
+  <script>
+    document.getElementById("pedidoForm").addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      const descricao = document.getElementById("descricao").value;
+      const usuarioId = document.getElementById("usuarioId").value;
+      const loginUsuario = document.getElementById("loginUsuario").value;
+      const emailUsuario = document.getElementById("emailUsuario").value;
+      const senhaUsuario = document.getElementById("senhaUsuario").value;
+
+      const pedidoData = {
+        descricao,
+        usuario: {
+          id: Number(usuarioId),
+          login: loginUsuario,
+          email: emailUsuario,
+          password: senhaUsuario
+        }
+      };
+
+      try {
+        const response = await fetch("http://localhost:8080/pedidos", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Basic " + btoa("admin:teste123") // Credenciais para autenticação
+          },
+          body: JSON.stringify(pedidoData)
+        });
+
+        if (response.ok) {
+          document.getElementById("response").innerHTML = `<span class="success">Pedido cadastrado com sucesso!</span>`;
+          document.getElementById("pedidoForm").reset();
+        } else {
+          throw new Error("Erro ao criar pedido.");
+        }
+      } catch (error) {
+        document.getElementById("response").innerHTML = `<span style="color: red;">Erro: ${error.message}</span>`;
+      }
+    });
+  </script>
+</body>
+
+</html>

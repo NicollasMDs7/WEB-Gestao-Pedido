@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Buscar Pedidos por Usuário</title>
+  <style>
+    /* Estilização Geral */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to right, #e0eafc, #cfdef3);
+      color: #333;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      text-align: center;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      font-size: 2.5em;
+      color: #555;
+    }
+
+    div.container {
+      background-color: #fff;
+      padding: 20px 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 600px;
+      transition: box-shadow 0.3s ease;
+    }
+
+    div.container:hover {
+      box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    input {
+      margin-bottom: 15px;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 1em;
+      width: 100%;
+    }
+
+    button {
+      background-color: #007BFF;
+      border: none;
+      color: white;
+      padding: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1em;
+      transition: background-color 0.3s ease;
+      margin-bottom: 15px;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    ul.pedidos {
+      list-style: none;
+      padding: 10px;
+      text-align: left;
+      max-height: 300px;
+      overflow-y: auto;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      margin-top: 10px;
+      font-size: 0.9em;
+      line-height: 1.6;
+    }
+
+    ul.pedidos li {
+      padding: 8px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    ul.pedidos li:last-child {
+      border-bottom: none;
+    }
+
+    .error {
+      color: red;
+      font-size: 0.9em;
+    }
+
+    .success {
+      color: green;
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>Buscar Pedidos por ID de Usuário</h1>
+    <input type="number" id="userId" placeholder="Digite o ID do Usuário" required>
+    <button id="buscarPedidos">Buscar Pedidos</button>
+    <div class="error" id="errorResponse"></div>
+    <ul class="pedidos" id="pedidosList">
+      <!-- Lista de pedidos será preenchida aqui dinamicamente -->
+    </ul>
+
+    <!-- Botão para retornar ao painel -->
+    <button onclick="window.location.href = 'opcoes.html';">Voltar para o Painel</button>
+  </div>
+
+  <script>
+    document.getElementById("buscarPedidos").addEventListener("click", async () => {
+      const userIdInput = document.getElementById("userId").value;
+      const pedidosList = document.getElementById("pedidosList");
+      const errorResponse = document.getElementById("errorResponse");
+
+      // Limpar mensagens e lista
+      pedidosList.innerHTML = "";
+      errorResponse.innerHTML = "";
+
+      if (!userIdInput) {
+        errorResponse.innerHTML = `<span>Por favor, insira um ID de usuário válido.</span>`;
+        return;
+      }
+
+      try {
+        const response = await fetch(`http://localhost:8080/pedidos/procurar?user_id=${userIdInput}`, {
+          headers: {
+            "Authorization": "Basic " + btoa("admin:teste123"), // Credenciais para autenticação
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error("Erro ao buscar pedidos.");
+        }
+
+        const pedidos = await response.json();
+
+        if (pedidos.length === 0) {
+          errorResponse.innerHTML = `<span style="color: green;">Nenhum pedido encontrado para o usuário ID ${userIdInput}.</span>`;
+        }
+
+        pedidos.forEach(pedido => {
+          const listItem = document.createElement("li");
+          listItem.innerHTML = `Descrição: ${pedido.descricao} | Usuário: ${pedido.usuario?.login || "Desconhecido"}`;
+          pedidosList.appendChild(listItem);
+        });
+      } catch (error) {
+        errorResponse.innerHTML = `<span>${error.message}</span>`;
+      }
+    });
+  </script>
+</body>
+
+</html>

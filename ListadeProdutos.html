@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lista de Produtos</title>
+  <style>
+    /* Estilização Geral */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to right, #e0eafc, #cfdef3);
+      color: #333;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      font-size: 2.5em;
+      color: #555;
+    }
+
+    .container {
+      background-color: #fff;
+      padding: 20px 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      max-width: 800px;
+      width: 100%;
+      transition: box-shadow 0.3s ease;
+    }
+
+    .container:hover {
+      box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    table {
+      width: 100%;
+      margin-top: 15px;
+      border-collapse: collapse;
+    }
+
+    table th,
+    table td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: center;
+    }
+
+    table th {
+      background-color: #007bff;
+      color: white;
+    }
+
+    button {
+      background-color: #007bff;
+      border: none;
+      color: white;
+      padding: 10px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      margin: 10px 0;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>Lista de Produtos</h1>
+    <button onclick="window.location.href='opcoes.html'">Voltar para o Painel</button>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nome</th>
+          <th>Preço</th>
+        </tr>
+      </thead>
+      <tbody id="productTableBody">
+        <!-- Os dados serão preenchidos aqui via JavaScript -->
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    async function fetchProducts() {
+      try {
+        const response = await fetch("http://localhost:8080/produtos", {
+          method: "GET",
+          headers: {
+            "Authorization": "Basic " + btoa("admin:teste123"),
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error("Erro ao buscar os dados dos produtos.");
+        }
+
+        const products = await response.json();
+        populateTable(products);
+      } catch (error) {
+        console.error("Erro:", error);
+        alert("Erro ao carregar os produtos.");
+      }
+    }
+
+    function populateTable(products) {
+      const tableBody = document.getElementById("productTableBody");
+      tableBody.innerHTML = ""; // Limpar a tabela antes de popular
+
+      products.forEach(product => {
+        const row = document.createElement("tr");
+
+        const cellId = document.createElement("td");
+        cellId.textContent = product.id;
+
+        const cellNome = document.createElement("td");
+        cellNome.textContent = product.nome;
+
+        const cellPreco = document.createElement("td");
+        cellPreco.textContent = `R$ ${product.preco.toFixed(2)}`;
+
+        row.appendChild(cellId);
+        row.appendChild(cellNome);
+        row.appendChild(cellPreco);
+
+        tableBody.appendChild(row);
+      });
+    }
+
+    // Carregar os produtos assim que a página é carregada
+    fetchProducts();
+  </script>
+</body>
+
+</html>
